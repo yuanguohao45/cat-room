@@ -1,14 +1,7 @@
 <template>
   <div class="login-box">
     <div class="login-page-container">
-      <el-form
-        :model="ruleForm2"
-        :rules="rules2"
-        ref="ruleForm2"
-        label-position="left"
-        label-width="0px"
-        class="demo-ruleForm login-container"
-      >
+      <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
         <h3 class="title">系统登录</h3>
         <el-form-item prop="account">
           <el-input type="text" v-model="ruleForm2.account" placeholder="随便输"></el-input>
@@ -27,7 +20,7 @@
 
 <script>
 import { mapMutations } from "vuex";
-import * as commonApi from "api/common";
+// import * as commonApi from "api/common";
 import * as types from "../store/mutation-types";
 export default {
   props: {},
@@ -59,9 +52,10 @@ export default {
   },
   created() {
     this.ruleForm2.checkPass = "";
-    if (localStorage.getItem('userName')) {  // 记住密码操作
-      this.ruleForm2.account = localStorage.getItem('userName');
-      this.ruleForm2.checkPass = localStorage.getItem('password');
+    if (localStorage.getItem("userName")) {
+      // 记住密码操作
+      this.ruleForm2.account = localStorage.getItem("userName");
+      this.ruleForm2.checkPass = localStorage.getItem("password");
     }
   },
   methods: {
@@ -77,7 +71,7 @@ export default {
             };
             sessionStorage.setItem("user", JSON.stringify(params)); // session存储用户信息
             this.logining = false;
-            this.$router.push({ path: "/menu1/sub1" });  // 去主页
+            this.$router.push({ path: "/wareMgt" }); // 去主页
           }, 1000);
           // const params = {
           //   userName: this.ruleForm2.account,

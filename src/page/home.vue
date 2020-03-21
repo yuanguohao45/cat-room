@@ -1,62 +1,50 @@
 <template lang="html">
-<div class="home-container">
-  <el-row class="container">
-    <el-col :span="24" class="header">
-            <el-col :span="10" class="logo" :class="'logo-width'">
-              <el-col class="logo-img"></el-col>
-              <el-col class="logo-title">{{sysName}}</el-col>
-            </el-col>
-            <el-col :span="5" class="breadcrumb-container">
-              <el-breadcrumb separator="/" class="breadcrumb-inner">
-                <el-breadcrumb-item v-for="item in $route.matched" :key="item.path">{{ item.name }}</el-breadcrumb-item>
-              </el-breadcrumb>
-            </el-col>
-            <el-col :span="4" class="userinfo">
-                <el-dropdown trigger="hover">
-                    <span class="el-dropdown-link userinfo-inner">{{sysUserName}}</span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>我的消息</el-dropdown-item>
-                        <el-dropdown-item>设置</el-dropdown-item>
-                        <el-dropdown-item divided @click.native="logoutFun">退出登录</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-            </el-col>
+  <div class="home-container">
+    <el-row class="container">
+      <el-col :span="24" class="header">
+        <el-col :span="10" class="logo" :class="'logo-width'">
+          <el-col class="logo-img"></el-col>
+          <el-col class="logo-title">{{sysName}}</el-col>
         </el-col>
-    <el-col :span="24" class="main">
-      <aside :class="'menu-expanded'">
-        <!--导航菜单-->
-       <el-menu :default-active="$route.path" ref="bigmenu" class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff" unique-opened router>
-         <template v-for="(item,index) in $router.options.routes" v-if="!item.hidden && checkContains(item.name)">
-           <el-submenu :index="index+''" v-if="!item.single">
-             <template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
-             <el-menu-item v-for="child in item.children" @click="addRouter(child, item.path +'/'+ child.path)" :index="item.path +'/'+ child.path" :key="item.path +'/'+ child.path" v-if="!child.hidden && checkContains(child.name)">{{child.name}}</el-menu-item>
-           </el-submenu>
-           <router-link v-else v-for="child in item.children" :index="child.path" :key="child.path" :to="child.path">
-              <div @click="addRouter(child)" class="single-menu">{{child.name}}</div>
-           </router-link>
-         </template>
-       </el-menu>
-     </aside>
-     <section class="content-container">
-       <div class="grid-content bg-purple-light">
-         <el-row class="nav-tabs">
-          <el-col :span="24">
-            <div @click="changeRouter(index)" v-for="(option, index) in arry" class="cus-tab-box" :class="activepath==option.path?'activeTab':''">
-              <span>{{option.name}}</span>
-              <span @click.stop="arry.length!=1 && removeTab(index)"><i class="fa fa-times close-icon" aria-hidden="true"></i></span>
-            </div>
-          </el-col>
-         </el-row>
-         <el-col :span="24" class="content-wrapper">
-           <transition name="fade" mode="out-in">
-             <router-view></router-view>
-           </transition>
-         </el-col>
-       </div>
-     </section>
-   </el-col>
- </el-row>
-</div>
+        <el-col :span="2" class="userinfo">
+          <el-dropdown trigger="hover">
+            <span class="el-dropdown-link userinfo-inner v-line">{{sysUserName}}</span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>我的消息</el-dropdown-item>
+              <el-dropdown-item>设置</el-dropdown-item>
+              <el-dropdown-item divided @click.native="logoutFun">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-col>
+        <div class="v-line m-t-10 m-r-10 float-right">
+          <img src="../assets/img/touxiang.jpg" width="25" alt="">
+        </div>
+        <el-col :span="2" class="float-right v-line header-help">
+          <el-button type="text" icon="el-icon-question" @click="handleHelp">帮助</el-button>
+        </el-col>
+      </el-col>
+      <el-col :span="24" class="main">
+        <aside :class="'menu-expanded'">
+          <!--导航菜单-->
+          <el-menu :default-active="$route.path" ref="bigmenu" class="el-menu-vertical-demo" background-color="#293038" text-color="#fff"  router>
+            <template v-for="(item,index) in $router.options.routes" v-if="!item.hidden && checkContains(item.name)">
+              <el-menu-item @click="addRouter(item, item.path)" :class="item.isActive?'is_active':''" :index="item.path" :key="item.name"><i :class="item.iconCls"></i>{{item.name}}</el-menu-item>
+            </template>
+          </el-menu>
+        </aside>
+        <div class="right-content">
+          <div class="p-l-20 p-t-5 p-b-5">
+            <span>{{$route.name}}</span>
+          </div>
+          <section class="content-container">
+            <transition name="fade" mode="out-in">
+              <router-view></router-view>
+            </transition>
+          </section>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
@@ -67,7 +55,7 @@ export default {
   components: {},
   data() {
     return {
-      sysName: "管理系统",
+      sysName: "猫舍管理系统",
       sysUserName: "",
       activepath: "",
       arry: [],
@@ -77,6 +65,19 @@ export default {
   watch: {
     $route(to, from) {
       this.activepath = to.path;
+    },
+    "$route.path": {
+      handler() {
+        this.$router.options.routes.forEach(item => {
+          if (item.redirect && this.$route.path == item.redirect) {
+            item.isActive = true;
+          } else {
+            item.isActive = false;
+          }
+        });
+      },
+      immediate: true,
+      deep: true
     }
   },
   methods: {
@@ -107,6 +108,14 @@ export default {
       }
       add = true;
       sessionStorage.setItem("tabData", JSON.stringify(this.arry));
+
+      // this.$router.options.routes.forEach(item => {
+      //   if (obj.path == item.path) {
+      //     item.isActive = true;
+      //   } else {
+      //     item.isActive = false;
+      //   }
+      // });
     },
     // 操作tab
     changeRouter(index) {
@@ -120,7 +129,7 @@ export default {
     // 遍历后台返回权限树节点数据
     checkTreeNode(tree) {
       for (var i = 0; i < tree.length; i++) {
-        this.treeArry.push(tree[i].name)
+        this.treeArry.push(tree[i].name);
         if (tree[i].child && tree[i].child.length > 0) {
           this.checkTreeNode(tree[i].child);
         }
@@ -138,7 +147,11 @@ export default {
     },
     ...mapMutations({
       setTabData: types.SET_TABDATA
-    })
+    }),
+    // 帮助
+    handleHelp() {
+      this.$router.push({});
+    }
   },
   created() {
     this.checkTreeNode(this.treeData);
@@ -181,20 +194,20 @@ export default {
   .header {
     height: 50px;
     line-height: 50px;
-    background: $globalColor;
-    color: #fff;
+    background-color: #fff;
+    // color: #fff;
     .userinfo {
       text-align: right;
       padding-right: 35px;
       float: right;
       .userinfo-inner {
         cursor: pointer;
-        color: #fff;
       }
     }
     .logo {
       height: 50px;
       font-size: 22px;
+      background: #293038;
       padding-left: 20px;
       border-color: $borderColor;
       border-right-width: 1px;
@@ -202,7 +215,7 @@ export default {
     }
     .logo-width {
       text-align: right;
-      width: 180px;
+      width: 240px;
       color: $baseColor;
       .logo-img {
         display: inline-block;
@@ -215,7 +228,7 @@ export default {
       .logo-title {
         display: inline-block;
         line-height: 50px;
-        width: 100px;
+        width: 155px;
         height: 50px;
       }
     }
@@ -263,7 +276,7 @@ export default {
       width: 60px;
     }
     .menu-expanded {
-      flex: 0 0 180px;
+      flex: 0 0 240px;
       width: 230px;
     }
     .single-menu {
@@ -273,37 +286,39 @@ export default {
       color: #fff;
       background-color: $baseColor;
     }
-    .content-container {
+    .right-content {
       flex: 1;
-      overflow-y: scroll;
-      padding: 20px;
-      .nav-tabs {
-        font-size: 12px;
-        border-bottom: 1px solid #e4e7ed;
-        .cus-tab-box {
-          display: inline-block;
-          margin: 5px 0px 5px 5px;
-          padding: 3px 10px;
-          border: 1px solid #ccc;
-          border-radius: 2px;
-          cursor: pointer;
-        }
-        .activeTab {
-          background-color: $baseColor;
-          color: #fff;
-          border-color: #fff;
-        }
-        .close-icon {
-          transform: rotate(0deg);
-          transition: transform 1s;
-        }
-        .close-icon:hover {
-          transform: rotate(180deg);
-        }
-      }
-      .content-wrapper {
+      display: flex;
+      flex-direction: column;
+      background-color: #f4f4f4;
+      .content-container {
+        // padding: 20px;
+        flex: 1;
         background-color: #fff;
-        box-sizing: border-box;
+        .nav-tabs {
+          font-size: 12px;
+          border-bottom: 1px solid #e4e7ed;
+          .cus-tab-box {
+            display: inline-block;
+            margin: 5px 0px 5px 5px;
+            padding: 3px 10px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            cursor: pointer;
+          }
+          .activeTab {
+            background-color: $baseColor;
+            color: #fff;
+            border-color: #fff;
+          }
+          .close-icon {
+            transform: rotate(0deg);
+            transition: transform 1s;
+          }
+          .close-icon:hover {
+            transform: rotate(180deg);
+          }
+        }
       }
     }
   }
@@ -311,5 +326,9 @@ export default {
     margin-top: 20px;
     margin-left: 20px;
   }
+}
+.is_active {
+  color: #ffffff;
+  background-color: #409eff !important;
 }
 </style>
