@@ -10,12 +10,52 @@
       <el-col :span="18">
         <el-form :model="postForm" size="mini" :label-width="formLabelWidth">
           <el-form-item label="猫名字：">
-            <el-input style="width:50%;" v-model="postForm.name" placeholder="请输入名字" autocomplete="off"></el-input>
+            <el-input style="width:80%;" v-model="postForm.name" placeholder="请输入名字" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="图片：">
             <el-upload :action="uploadImgPath" list-type="picture-card" :on-remove="handleRemove" :on-success="handleSuccess" :before-upload="beforeUpload" :on-preview="handlePictureCardPreview" :file-list="uploadList" :show-file-list="true" multiple>
               <i class="el-icon-plus"></i>
             </el-upload>
+          </el-form-item>
+          <el-form-item label="品种：">
+            <el-select v-model="postForm.type" placeholder="请选择品种">
+              <el-option v-for="item in codeOptions.typeOptions" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="库存：">
+            <el-input style="width:80%;" v-model.number="postForm.store" placeholder="请输入数字" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="性别：">
+            <el-radio-group v-model="postForm.sex">
+              <el-radio v-for="item in codeOptions.sexOptions" :key="item.value" :label="item.value">{{item.label}}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="年龄：">
+            <el-input style="width:80%;" v-model.number="postForm.age" placeholder="请输入年龄" autocomplete="off"></el-input>
+            &nbsp;&nbsp;月
+          </el-form-item>
+          <el-form-item label="是否疫苗/驱虫：">
+            <el-select v-model="postForm.health" placeholder="请选择">
+              <el-option v-for="item in codeOptions.healthOptions" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="价格：">
+            <el-input style="width:80%;" v-model="postForm.price" placeholder="请输入名字" autocomplete="off"></el-input>
+            &nbsp;&nbsp;积分
+          </el-form-item>
+          <el-form-item label="是否上架：">
+            <el-select v-model="postForm.isOnSale" placeholder="请选择">
+              <el-option v-for="item in codeOptions.saleOptions" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="简介：">
+            <el-input style="width:80%;" type="textarea" :autosize="{ minRows: 4, maxRows: 6}" v-model="postForm.brief" placeholder="请输入名字" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="详情：">
+            <editor v-model="postForm.detail.content" id="editor" ref="editor" :autoHeightEnabled="true" :height="510" :writingType="writingType" :editor_content="postForm.detail.content"></editor>
           </el-form-item>
           <el-form-item>
             <div v-if="showProcessBtn">
@@ -33,6 +73,7 @@
 <script>
 import request from "@/config";
 import { apis } from "@/api";
+import store from "@/utils/store";
 
 export default {
   name: "wareDialog",
@@ -53,17 +94,20 @@ export default {
       listObj: {}, //图片列表
 
       postForm: {
+        name: "",
         code: "",
         type: "",
         sex: "",
         pics: [],
-        keyWords: "",
-        minPrice: "",
-        maxPrice: "",
-        minPrice1: "",
-        maxPrice1: "",
-        priceSort: ""
-      }
+        store: "",
+        age: "",
+        health: "",
+        price: "",
+        isOnSale: "",
+        brief: "",
+        desc: ""
+      },
+      codeOptions: store.codeOptions
     };
   },
   watch: {

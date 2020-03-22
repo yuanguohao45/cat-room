@@ -3,16 +3,12 @@
     <div class="form-head">
       <el-row :gutter="20">
         <el-col :span="2">
-          <el-dropdown>
+          <el-dropdown v-model="queryForm.code">
             <span class="el-dropdown-link">
               商品编号<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item icon="el-icon-plus">黄金糕</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-circle-plus">狮子头</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-circle-plus-outline">螺蛳粉</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-check">双皮奶</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-circle-check">蚵仔煎</el-dropdown-item>
+              <el-dropdown-item v-for="item in codeOptions.subCodeOptions" :key="item.value" :label="item.label" :value="item.value">{{item.label}}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -33,13 +29,13 @@
       <el-row :gutter="20" class="m-t-10 m-b-5">
         <el-col :span="4">
           <el-select size="mini" v-model="queryForm.type" placeholder="请选择品种">
-            <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value">
+            <el-option v-for="item in codeOptions.typeOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-col>
         <el-col :span="4">
           <el-select size="mini" v-model="queryForm.sex" placeholder="请选择性别">
-            <el-option v-for="item in sexOptions" :key="item.value" :label="item.label" :value="item.value">
+            <el-option v-for="item in codeOptions.sexOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-col>
@@ -119,42 +115,7 @@ export default {
         currentPage: 1,
         pageSize: 10
       },
-      typeOptions: [
-        {
-          value: "",
-          label: "全部品种"
-        },
-        {
-          value: "1",
-          label: "英短"
-        },
-        {
-          value: "2",
-          label: "稍等短"
-        },
-        {
-          value: "3",
-          label: "水电费"
-        },
-        {
-          value: "4",
-          label: "豆腐"
-        }
-      ],
-      sexOptions: [
-        {
-          value: "",
-          label: "全部性别"
-        },
-        {
-          value: "1",
-          label: "公"
-        },
-        {
-          value: "0",
-          label: "母"
-        }
-      ],
+      codeOptions: store.codeOptions,
       tableLoading: false,
       tableData: store.wareTableData,
       total: 14,
